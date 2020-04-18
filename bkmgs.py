@@ -16,7 +16,6 @@ app.secret_key = '123123'
 
 @app.route('/') #jinjia templates
 def home():
-    bks.system_and_env_helper() # this requires a console answer from the user to check proxy settings!!!
     return render_template('home.html', codes=session.keys())
     # return object to be displayed,
 
@@ -74,7 +73,7 @@ def your_url():
                                        seach_pattern=request.form['search_pattern'])
 
         # this part below is relative to the link shortener service
-        # which has been exlcuded in home.html
+        # which can be exlcuded in home.html
         # however Todo: I want to implement a tracking of searches and
         # cookie management similar to what follows
         filename = cd + '/' + 'urls.json'
@@ -136,5 +135,6 @@ def session_api():
     return jsonify(list(session.keys()))
 
 if __name__ == '__main__':
+    bks.system_and_env_helper()  # this requires a console answer from the user to check proxy settings!!!
     app.run()
 
