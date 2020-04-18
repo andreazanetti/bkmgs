@@ -39,22 +39,16 @@ class dfs_chrome_bookmarks():
 
     def _explore_bmk_file(self, dd, loc=('na',)):
         '''
-        Fills the link_list with visiting in DFS the tree of bookmarks
+        Fills the link_list with visiting recursively the tree of bookmarks
         keeping track of the folder structure, so as for the user to select
         which folder to include or exclude later
         params: dd - dictionary
         return: nothing - side effect to fill self.link_list with tuple(url, (location in bmks))
         '''
 
+        # if the dictionary is about a url, add the url the list of urls, along with its position
+        # in the tree of bookmarks
         if 'url' in dd.keys():
-            # link dict
-            # print(f"This dict {dd['name']} represents a link, as type field is: {dd['type']}")
-            # print(": ".join([dd['type'], dd['url']]))
-            # print(dd['name'], "\n")
-            # print("URL found and loc is:", loc)
-
-            # if the dictionary is about a url, add the url the list of urls, along with its position
-            # in the tree of bookmarks
             self.link_list.append((dd['url'], loc + (dd['name'],)))
 
             # fill the simplified dictionary
@@ -129,7 +123,7 @@ def do_search(bmk_obj, pattern_sought=None, folder_list=None):
     :param bmk_obj: dfs_chrome_bookmarks object representing the Chrome Bookmarks
     :param pattern_sought: pattern to match
     :param folder_list: list of Chrome Bookmarks folders for the specific search
-    :return: None
+    :return: all_responses: list of all links that match/contain the pattern
     '''
     # Using google to search on for pattern on selected bookmarks
     print(f"\n\n\ndo_search: Test of search of '{pattern_sought}' in selected bookmarks folders:\n{folder_list}")
@@ -139,7 +133,7 @@ def do_search(bmk_obj, pattern_sought=None, folder_list=None):
         kk = _get_full_key(bmk_obj.link_dict.keys(), i)
         print(kk)
 
-        # instead of looping over the list of links, pack a single request
+        # Todo: instead of looping over the list of links, pack a single request
         # with multiple domains (or pages) to look into it
         try:
             res = search(f"{pattern_sought}", domains=bmk_obj.link_dict[kk], stop=10)
@@ -148,7 +142,7 @@ def do_search(bmk_obj, pattern_sought=None, folder_list=None):
             all_responses.extend(res)
             print(f"Status of all responses is:\n{all_responses}")
             time.sleep(5)  # avoid being banned by Google
-            # Todo: Get from search the link with a sample of the sentence where the patter was found
+            # Todo: Get from search the link with a sample of the sentence where the pattern was found
         except HTTPError as e:
                 print(f"While analysing sites {bmk_obj.link_dict[kk]}\n got HTTP Error")
                 print(f"HTTP Error: {e}")

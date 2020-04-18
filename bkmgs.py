@@ -7,33 +7,11 @@ import os
 import bkm_search as bks
 import utilities.url_utils as ul
 
-
-
-# os.environ["FLASK_ENV"] = "development"
+# os.environ["FLASK_ENV"] = "development" <-- Todo: check if this makes sense
 
 app = Flask(__name__)
-# app.run(host='127.0.0.1')  # making it visible on my net for remote testing
-
-# 192.168.0.45 - - [16/Apr/2020 18:21:53] "GET / HTTP/1.1" 500 -
-# Traceback (most recent call last):
-#   File "/Users/azanetti/anaconda/envs/bkmgs/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
-#     raise value
-#   File "/Users/azanetti/PycharmProjects/bkmgs/bkmgs.py", line 9, in <module>
-#     app.secret_key = '123123'
-# AttributeError: 'NoneType' object has no attribute 'secret_key'
-# 192.168.0.45 - - [16/Apr/2020 18:21:53] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
-# 192.168.0.45 - - [16/Apr/2020 18:21:53] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
-# 192.168.0.45 - - [16/Apr/2020 18:21:53] "GET /?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
-# 192.168.0.45 - - [16/Apr/2020 18:21:53] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
-# 192.168.0.45 - - [16/Apr/2020 18:21:53] "GET /?__debugger__=yes&cmd=resource&f=ubuntu.ttf HTTP/1.1" 200 -
-# ^C(bkmgs) azanetti-mac01:bkmgs azanetti$ env | grep FLASK
-# FLASK_ENV=development
-# FLASK_APP=bkmgs.py
-# (bkmgs) azanetti-mac01:bkmgs azanetti$ flask run --host=192.168.0.45
-
-
 app.secret_key = '123123'
-# very random key here!!! used to communicate with the user
+# there sould be a very random key here!!! used to communicate with the user
 # - for message flashing to the user to work
 
 @app.route('/') #jinjia templates
@@ -69,7 +47,7 @@ def your_url():
             f.save(full_name)
 
             # here I invoke the search part passing pattern and bookmarks file
-            # then the results should be displayed on the result page
+            # then the results are displayed on the result page
 
             # Get user bookmarks into a manageable dict
             bmk_links = bks.get_Chrome_bookmarks_data(full_name)
@@ -96,6 +74,9 @@ def your_url():
                                        seach_pattern=request.form['search_pattern'])
 
         # this part below is relative to the link shortener service
+        # which has been exlcuded in home.html
+        # however Todo: I want to implement a tracking of searches and
+        # cookie management similar to what follows
         filename = cd + '/' + 'urls.json'
         if os.path.exists(filename):
             print("loading data from existing file ", filename)
@@ -124,14 +105,6 @@ def your_url():
 
         return render_template('your_url.html',
                                 code=request.form['code'])
-        # if  'url' in request.form.keys():
-        #     return render_template('your_url.html',
-        #                            code=request.form['code'],
-        #                            url=request.form['url'])  # code=request.args['code'])
-        # else:
-        #     return render_template('your_url.html',
-        #                            code=request.form['code'])
-
     else:
         return redirect(url_for('home'))#redirect('/')  # redirect to the home page
 
@@ -165,4 +138,3 @@ def session_api():
 if __name__ == '__main__':
     app.run()
 
-# export FLASK_ENV=development in bash  is needed?
